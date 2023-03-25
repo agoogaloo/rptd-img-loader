@@ -2,15 +2,8 @@ const { jsonUtility, Level } = require('rptd-core')
 const PNG = require('png-js')
 
 //a list of all the tiles that can be selected from format is tileid, r,g,b values
-let hotTiles = [[0,96,74,74],[1,86,43,32],[3,84,19,7],[4,49,35,23],[5,135,61,55],[6,113,86,72],
-    [7,73,75,60],[8,137,71,42],[9,102,94,88],[10,100,18,0],[11,25,35,37],[12,180,177,172],
-    [200,58,44,46],[203,166,72,4],[206,127,64,62],[209,87,28,19]]
-
-let coldTiles = [[0,44,51,67],[1,54,53,64],[3,24,26,42],[4,31,38,58],[5,71,75,104],[6,90,87,102],
-    [7,53,64,63],[8,61,53,68],[9,73,75,77],[10,65,113,251],[11,25,34,37],[12,176,176,176],
-    [200,43,47,61],[203,24,126,,227],[206,73,73,97],[209,36,57,89]]
-
-
+const hotTiles = require('./json/hotTiles.json')
+const coldTiles = require('./json/coldTiles.json')
 
 function createImg(path = './images/testImg.png', level, finish){
     let img = PNG.load(path)
