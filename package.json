@@ -1,0 +1,15 @@
+{
+  "name": "imgloader",
+  "version": "1.0.0",
+  "description": "load images into ruptured maps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Agoogaloo",
+  "license": "ISC",
+  "dependencies": {
+    "png-js": "^1.0.0",
+    "rptd-core": "^1.2.7"
+  }
+}
