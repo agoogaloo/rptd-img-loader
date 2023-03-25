@@ -3,8 +3,16 @@ const fs = require('fs')
 const { PNG } = require('pngjs')
 
 //a list of all the tiles that can be selected from format is tileid, r,g,b values
-const hotTiles = require('./json/hotTiles.json')
-const coldTiles = require('./json/coldTiles.json')
+
+const tiles = []
+
+addTileType = (tile, type) => { 
+    tile.push(type) 
+    return tile
+}
+const hotTiles = require('./json/hotTiles.json').map((tile) => { return addTileType(tile, 0) })
+const coldTiles = require('./json/coldTiles.json').map((tile) => { return addTileType(tile, 1) })
+tiles.push(...hotTiles, ...coldTiles)
 
 // returns tile id and whether the tile will be hot or cold
 function pixelToTile(x ,y, pixel){
@@ -15,27 +23,18 @@ function pixelToTile(x ,y, pixel){
     let tile = -1 // index of the tile 
     let type = 0
 
-    for(let i in hotTiles){
-        const rDiff = Math.abs(r-hotTiles[i][1]) 
-        const gDiff = Math.abs(g-hotTiles[i][2])
-        const bDiff = Math.abs(b-hotTiles[i][3])
+    for(let i in tiles){
+        const rDiff = Math.abs(r-tiles[i][1]) 
+        const gDiff = Math.abs(g-tiles[i][2])
+        const bDiff = Math.abs(b-tiles[i][3])
 
-        if(diff>rDiff+gDiff+bDiff){
-            tile = hotTiles[i][0]
+        if(diff>rDiff+gDiff+bDiff) {
+            tile = tiles[i][0]
             diff = rDiff+gDiff+bDiff
+            type = tiles[i][4]
         }
     }
-    for(let i in coldTiles){
-        const rDiff = Math.abs(r-coldTiles[i][1]) 
-        const gDiff = Math.abs(g-coldTiles[i][2])
-        const bDiff = Math.abs(b-coldTiles[i][3])
 
-        if(diff>rDiff+gDiff+bDiff){
-            tile = coldTiles[i][0]
-            diff = rDiff+gDiff+bDiff
-            type = 1
-        }
-    }
     if(tile ===-1){
        console.log("something went wrong. pixel at "+x+","+y+" is -1 with r:"+r+" g:"+g+" b:"+b+" values per pixel:"+valuesperPixel )
     }
@@ -55,20 +54,20 @@ async function convertImage(level, filepath) {
         .on('parsed', function () {
             for (let y = 0; y < this.height; y++) {
                 for (let x = 0; x < this.width; x++) {
-                    let idx = (this.width * y + x) << 2;
+                    const idx = (this.width * y + x) << 2;
             
                     const r = this.data[idx]
                     const g = this.data[idx + 1]
                     const b = this.data[idx + 2]
             
-                    let tileData = pixelToTile(x, y, { r, g, b });
+                    const tileData = pixelToTile(x, y, { r, g, b });
 
                     switch(tileData.type) {
                         case 0:
-                            level.addTile({ ID: tileData.tile, x: x, y: -y });
+                            level.addTile({ ID: tileData.tile, layer: "T0", x: x, y: -y });
                             break;
                         case 1:
-                            level.addTile({ ID: tileData.tile, x: x, y: -y+1000 });
+                            level.addTile({ ID: tileData.tile, layer: "T0", x: x, y: -y+1000 });
                             break;
                     }
                 }
